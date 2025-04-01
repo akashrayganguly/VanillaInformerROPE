@@ -31,9 +31,16 @@ class RotaryPositionalEmbedding(nn.Module):
         # Pre-compute sin and cos embeddings.
         sin_embed = torch.sin(sinusoid_inp)  # (max_len, d_model/2)
         cos_embed = torch.cos(sinusoid_inp)  # (max_len, d_model/2)
+
+        # Learnable ROPE
+        # Register these as learnable parameters.
+        self.sin_embed = nn.Parameter(sin_embed, requires_grad=True)
+        self.cos_embed = nn.Parameter(cos_embed, requires_grad=True)
+
+        # Fixed ROPE
         # Register buffers so they remain fixed.
-        self.register_buffer("sin_embed", sin_embed)
-        self.register_buffer("cos_embed", cos_embed)
+        #self.register_buffer("sin_embed", sin_embed)
+        #self.register_buffer("cos_embed", cos_embed)
     
     def rotate_half(self, x):
         """
