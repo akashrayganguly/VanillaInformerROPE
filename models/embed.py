@@ -238,6 +238,7 @@ class RotaryChannelEmbeddingLearnable(nn.Module):
         sin_embed = sin_embed.repeat(1, int(seq_len/self.c_in), 1)
         cos_embed = cos_embed.repeat(1, int(seq_len/self.c_in), 1)
 
+        print(f'{sin_embed.size()}    val: int(seq_len/self.c_in)', flush=True, ) 
         
         # Apply the rotary transformation with pointwise multiplication.
         return x * cos_embed + self.rotate_half(x) * sin_embed
