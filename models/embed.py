@@ -235,10 +235,10 @@ class RotaryChannelEmbeddingLearnable(nn.Module):
         sin_embed = torch.repeat_interleave(sin_embed, repeats=2, dim=-1)
         cos_embed = torch.repeat_interleave(cos_embed, repeats=2, dim=-1)
 
-        sin_embed = sin_embed.repeat(1, int(seq_len/self.c_in), 1)
-        cos_embed = cos_embed.repeat(1, int(seq_len/self.c_in), 1)
+        sin_embed = sin_embed.repeat(1, int(seq_len/7), 1)
+        cos_embed = cos_embed.repeat(1, int(seq_len/7), 1)
 
-        print(f'{sin_embed.size()}    val: {int(seq_len/self.c_in)}', flush=True) 
+        print(f'{x.size()}    val: {int(seq_len/7)}', flush=True) 
         
         # Apply the rotary transformation with pointwise multiplication.
         return x * cos_embed + self.rotate_half(x) * sin_embed
@@ -320,10 +320,10 @@ class RotaryChannelEmbeddingFixed(nn.Module):
         sin_embed = torch.repeat_interleave(sin_embed, repeats=2, dim=-1)
         cos_embed = torch.repeat_interleave(cos_embed, repeats=2, dim=-1)
 
-        sin_embed = sin_embed.repeat(1, int(seq_len/self.c_in), 1)
-        cos_embed = cos_embed.repeat(1, int(seq_len/self.c_in), 1)
+        sin_embed = sin_embed.repeat(1, int(seq_len/7), 1)
+        cos_embed = cos_embed.repeat(1, int(seq_len/7), 1)
 
-        print(f'{sin_embed.size()}    val: {int(seq_len/self.c_in)}', flush=True) 
+        print(f'{x.size()}    val: {int(seq_len/7)}', flush=True) 
         
         # Apply the rotary transformation with pointwise multiplication.
         return x * cos_embed + self.rotate_half(x) * sin_embed
