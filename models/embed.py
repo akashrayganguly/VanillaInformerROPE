@@ -241,7 +241,7 @@ class RotaryChannelEmbeddingLearnable(nn.Module):
         sin_embed = F.pad(sin_embed, (0, 0, 1, 1))
         cos_embed = F.pad(cos_embed, (0, 0, 1, 1))
 
-        print(f'{x[0,0,:]}    val: {int(seq_len/7)}', flush=True) 
+        #print(f'{x[0,0,:]}    val: {int(seq_len/7)}', flush=True) 
         
         # Apply the rotary transformation with pointwise multiplication.
         return x * cos_embed + self.rotate_half(x) * sin_embed
@@ -330,7 +330,7 @@ class RotaryChannelEmbeddingFixed(nn.Module):
         cos_embed = F.pad(cos_embed, (0, 0, 1, 1))
 
 
-        print(f'{x[0,0,:]}    val: {int(seq_len/7)}', flush=True) 
+        #print(f'{x[0,0,:]}    val: {int(seq_len/7)}', flush=True) 
         
         # Apply the rotary transformation with pointwise multiplication.
         return x * cos_embed + self.rotate_half(x) * sin_embed
@@ -460,8 +460,11 @@ class DataEmbedding(nn.Module):
         self.dropout = nn.Dropout(p=dropout)
 
     def forward(self, x, x_mark):
+        print(f'{x.size()}    Original', flush=True)
         x = self.value_embedding(x)
+        print(f'{x.size()}    Value Embedded', flush=True)
         x = self.rpe.forward(x) + self.rpe_fixed.forward(x) #+ self.temporal_embedding(x_mark) # self.position_embedding(x) #+ self.temporal_embedding(x_mark)
+        print(f'{x.size()}    RPE', flush=True)
         x = self.fixed_channel_embedding.forward(x) + self.learnable_channel_embedding.forward(x)
         
         #x = self.value_embedding(x) + self.temporal_embedding(x_mark) + self.position_embedding(x) #+ self.temporal_embedding(x_mark)
