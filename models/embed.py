@@ -237,8 +237,11 @@ class RotaryChannelEmbeddingLearnable(nn.Module):
 
         sin_embed = sin_embed.repeat(1, int(seq_len/7), 1)
         cos_embed = cos_embed.repeat(1, int(seq_len/7), 1)
+        
+        sin_embed = F.pad(sin_embed, (0, 0, 1, 1))
+        cos_embed = F.pad(cos_embed, (0, 0, 1, 1))
 
-        print(f'{x.size()}    val: {int(seq_len/7)}', flush=True) 
+        print(f'{x[0,0,:]}    val: {int(seq_len/7)}', flush=True) 
         
         # Apply the rotary transformation with pointwise multiplication.
         return x * cos_embed + self.rotate_half(x) * sin_embed
@@ -323,7 +326,11 @@ class RotaryChannelEmbeddingFixed(nn.Module):
         sin_embed = sin_embed.repeat(1, int(seq_len/7), 1)
         cos_embed = cos_embed.repeat(1, int(seq_len/7), 1)
 
-        print(f'{x.size()}    val: {int(seq_len/7)}', flush=True) 
+        sin_embed = F.pad(sin_embed, (0, 0, 1, 1))
+        cos_embed = F.pad(cos_embed, (0, 0, 1, 1))
+
+
+        print(f'{x[0,0,:]}    val: {int(seq_len/7)}', flush=True) 
         
         # Apply the rotary transformation with pointwise multiplication.
         return x * cos_embed + self.rotate_half(x) * sin_embed
