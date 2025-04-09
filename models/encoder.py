@@ -35,6 +35,11 @@ class EncoderLayer(nn.Module):
         self.dropout = nn.Dropout(dropout)
         self.activation = F.relu if activation == "relu" else F.gelu
 
+        self.norm3 = nn.LayerNorm(d_model)
+        self.W = nn.Parameter(torch.randn(c, c))
+        self.c = 7
+
+
     def forward(self, x, attn_mask=None):
         # x [B, L, D]
         # x = x + self.dropout(self.attention(
@@ -52,6 +57,8 @@ class EncoderLayer(nn.Module):
         y = self.dropout(self.conv2(y).transpose(-1,1))
 
         #return self.norm2(x+y), attn
+
+        
         x = self.norm2(x+y)
         
         # Residual connection and normalization
@@ -67,7 +74,7 @@ class EncoderLayer(nn.Module):
         x = x_transformed.view(batch_size, seq_len, d_model)
         x = self.dropout(x)
         
-        return self.norm4(x)
+        return self.norm3(x), attn
 
 
 
