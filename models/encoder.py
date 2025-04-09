@@ -36,7 +36,7 @@ class EncoderLayer(nn.Module):
         self.activation = F.relu if activation == "relu" else F.gelu
 
         self.norm3 = nn.LayerNorm(d_model)
-        self.W = nn.Parameter(torch.empty(c, c))
+        self.W = nn.Parameter(torch.empty(7, 7))
         nn.init.xavier_uniform_(self.W)
         
         self.c = 7
