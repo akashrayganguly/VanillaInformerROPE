@@ -53,7 +53,7 @@ class DecoderLayer(nn.Module):
         # Apply W to the c dimension: W (c, c) multiplies x_reshaped (..., c, d_model)
         x_transformed = torch.einsum('ij,bnjd->bnid', self.W, x_reshaped)
         # Reshape back to (batch_size, n*c, d_model)
-        x = x_transformed.view(batch_size, seq_len, d_model)
+        x = x_transformed.reshape(batch_size, seq_len, d_model)
         x = self.dropout(x)
         
         return self.norm4(x)
