@@ -19,7 +19,8 @@ class DecoderLayer(nn.Module):
         self.activation = F.relu if activation == "relu" else F.gelu
 
         self.norm4 = nn.LayerNorm(d_model)
-        self.W = nn.Parameter(torch.randn(c, c))
+        self.W = nn.Parameter(torch.empty(c, c))
+        nn.init.xavier_uniform_(self.W)
         self.c = 7
 
     def forward(self, x, cross, x_mask=None, cross_mask=None):
