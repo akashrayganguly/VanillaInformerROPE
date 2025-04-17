@@ -116,7 +116,9 @@ class Exp_Informer(Exp_Basic):
         for i, (batch_x,batch_y,batch_x_mark,batch_y_mark) in enumerate(vali_loader):
             pred, true = self._process_one_batch(
                 vali_data, batch_x, batch_y, batch_x_mark, batch_y_mark)
-            loss = criterion(pred.detach().cpu(), true.detach().cpu())
+            #loss = criterion(pred.detach().cpu(), true.detach().cpu())
+            # Assuming Faithful vector representation, loss becomes loss wrt to the first element of the faithful vector.
+            loss = criterion(pred[:,:,:1].detach().cpu(), true[:,:,:1].detach().cpu())
             total_loss.append(loss)
         total_loss = np.average(total_loss)
         self.model.train()
@@ -154,13 +156,17 @@ class Exp_Informer(Exp_Basic):
                 model_optim.zero_grad()
                 pred, true = self._process_one_batch(
                     train_data, batch_x, batch_y, batch_x_mark, batch_y_mark)
-                print(f'prediction Shape: {pred.shape}', flush=True)
                 loss = criterion(pred, true)
+                # Calculating loss on the first element of faithful vector. Note however that the training will be done on total loss over the faithful vector.
+                actual_loss = criterion(pred[:,:, :1], true[:,:, :1])
+                
                 #print(f'{loss.item()}', flush=True)
                 train_loss.append(loss.item())
                 
                 if (i+1) % 100==0:
-                    print("\titers: {0}, epoch: {1} | loss: {2:.7f}".format(i + 1, epoch + 1, loss.item()))
+                    #print("\titers: {0}, epoch: {1} | loss: {2:.7f}".format(i + 1, epoch + 1, loss.item()))
+                    print("\titers: {0}, epoch: {1} | loss: {2:.7f}".format(i + 1, epoch + 1, actual_loss.item()))
+                    
                     speed = (time.time()-time_now)/iter_count
                     left_time = speed*((self.args.train_epochs - epoch)*train_steps - i)
                     print('\tspeed: {:.4f}s/iter; left time: {:.4f}s'.format(speed, left_time))
@@ -205,8 +211,9 @@ class Exp_Informer(Exp_Basic):
         for i, (batch_x,batch_y,batch_x_mark,batch_y_mark) in enumerate(test_loader):
             pred, true = self._process_one_batch(
                 test_data, batch_x, batch_y, batch_x_mark, batch_y_mark)
-            preds.append(pred.detach().cpu().numpy())
-            trues.append(true.detach().cpu().numpy())
+            # Changed here as well; assuming faithful vector representation of the data file [nc, m_eff+1]
+            preds.append(pred[:,:,:1].detach().cpu().numpy())
+            trues.append(true[:,:,:1].detach().cpu().numpy())
 
         preds = np.array(preds)
         trues = np.array(trues)
