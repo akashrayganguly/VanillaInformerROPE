@@ -154,7 +154,9 @@ class Exp_Informer(Exp_Basic):
                 model_optim.zero_grad()
                 pred, true = self._process_one_batch(
                     train_data, batch_x, batch_y, batch_x_mark, batch_y_mark)
+                print(f'prediction Shape: {pred.shape}', flush=True)
                 loss = criterion(pred, true)
+                #print(f'{loss.item()}', flush=True)
                 train_loss.append(loss.item())
                 
                 if (i+1) % 100==0:
